@@ -3,9 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenue</title>
+    <title>L'Atelier - Galerie d'Art</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fontsource: Playfair Display & Lato -->
+    <link rel="stylesheet" href="https://fontsource.org/files/playfair-display/latin-400.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/playfair-display/latin-700.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/lato/latin-300.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/lato/latin-400.css" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        'art-black': '#1a1a1a',
+                        'art-gray': '#f4f4f4',
+                        'art-gold': '#c5a059',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Lato', sans-serif; background-color: #fafafa; }
+        h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
 </head>
-<body>
-<h1>Bienvenue</h1>
+<body class="text-art-black antialiased flex flex-col min-h-screen">
+
+<!-- Navigation -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20">
+            <div class="flex items-center cursor-pointer" onclick="app.navigate('gallery')">
+                <span class="text-2xl font-bold tracking-widest serif">L'ATELIER</span>
+            </div>
+            <div class="flex items-center space-x-8">
+                <button onclick="app.navigate('gallery')" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Galerie</button>
+
+                <div id="auth-buttons" class="flex space-x-4">
+                    <button onclick="app.navigate('login')" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Connexion</button>
+                </div>
+                <div id="user-profile" class="hidden flex items-center space-x-2">
+                    <span id="username-display" class="text-sm font-semibold"></span>
+                    <button onclick="app.logout()" class="text-xs text-gray-500 hover:text-red-500">Déconnexion</button>
+                </div>
+
+                <button onclick="app.navigate('cart')" class="relative group">
+                    <svg class="w-6 h-6 text-gray-700 group-hover:text-art-gold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-art-gold text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center opacity-0 transition-opacity">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content Area -->
+<main id="app-container" class="flex-grow">
+    <!-- Content injected via JS -->
+</main>
+
+<!-- Footer -->
+<footer class="bg-art-black text-white py-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h3 class="serif text-xl mb-4">L'ATELIER</h3>
+        <p class="text-gray-400 text-sm">Art contemporain & Classique</p>
+        <div class="mt-8 text-xs text-gray-600">
+            &copy; 2023 L'Atelier Galerie. Tous droits réservés.
+        </div>
+    </div>
+</footer>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-5 right-5 bg-art-black text-white px-6 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    Action effectuée avec succès
+</div>
+
+<script>
+    // --- Data ---
+    const artworks = [
+        {
+            id: 1,
+            title: "Éclats de Couleurs",
+            artist: "Jean Dupont",
+            price: 1200,
+            description: "Une explosion abstraite de bleu et d'orange capturant l'énergie pure.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1402917a1-914a-4454-81db-791684209f4c.png"
+        },
+        {
+            id: 2,
+            title: "Sérénité Alpine",
+            artist: "Marie Claire",
+            price: 2500,
+            description: "Paysage majestueux reflétant la tranquillité des montagnes.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/17681f78f-830e-448c-a2ce-23cd2184747a.png"
+        },
+        {
+            id: 3,
+            title: "La Dame en Vert",
+            artist: "Alessandro Rossi",
+            price: 4500,
+            description: "Portrait classique inspiré de la Renaissance, riche en détails.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/19832fe1f-eb38-4354-88ae-8c69d100f62f.png"
+        },
+        {
+            id: 4,
+            title: "Géométrie Noire",
+            artist: "Modernist X",
+            price: 1800,
+            description: "Minimalisme pur. Une étude de formes et d'ombres.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1b347924a-ac84-4124-bf72-b0b81d30785d.png"
+        },
+        {
+            id: 5,
+            title: "Nature Morte Dorée",
+            artist: "Élodie Blanc",
+            price: 950,
+            description: "Impressionnisme vibrant célébrant les fruits de la saison.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/185eb515c-e4f7-440a-8913-61dd35ae3fa4.png"
+        },
+        {
+            id: 6,
+            title: "Rêve Suspendu",
+            artist: "Fantasy Art Co.",
+            price: 3200,
+            description: "Un monde onirique où la gravité n'a plus de sens.",
+            image: "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1982b727b-eea0-4abb-9ae1-47cab482e4a4.png"
+        }
+    ];
+
+    // --- Application Logic ---
+    const app = {
+        state: {
+            view: 'gallery',
+            user: null, // { name: '...' }
+            cart: []
+        },
+
+        init() {
+            this.render();
+        },
+
+        navigate(viewName) {
+            this.state.view = viewName;
+            window.scrollTo(0, 0);
+            this.render();
+        },
+
+        login(email, password) {
+            // Simulation simple
+            if(email && password) {
+                this.state.user = { name: email.split('@')[0] };
+                this.showToast(`Bienvenue, ${this.state.user.name}`);
+                this.updateNav();
+                this.navigate('gallery');
+            } else {
+                alert("Veuillez remplir tous les champs");
+            }
+        },
+
+        register(name, email, password) {
+            if(name && email && password) {
+                this.state.user = { name: name };
+                this.showToast("Compte créé avec succès !");
+                this.updateNav();
+                this.navigate('gallery');
+            } else {
+                alert("Veuillez remplir tous les champs");
+            }
+        },
+
+        logout() {
+            this.state.user = null;
+            this.state.cart = [];
+            this.updateNav();
+            this.showToast("Déconnecté");
+            this.navigate('gallery');
+        },
+
+        addToCart(id) {
+            const artwork = artworks.find(a => a.id === id);
+            this.state.cart.push(artwork);
+            this.updateCartCount();
+            this.showToast("Ajouté au panier");
+        },
+
+        removeFromCart(index) {
+            this.state.cart.splice(index, 1);
+            this.updateCartCount();
+            this.render(); // Re-render cart view
+        },
+
+        checkout() {
+            if(this.state.cart.length === 0) return;
+            if(!this.state.user) {
+                alert("Veuillez vous connecter pour finaliser l'achat.");
+                this.navigate('login');
+                return;
+            }
+            alert(`Merci pour votre achat de ${this.state.cart.length} œuvre(s) !`);
+            this.state.cart = [];
+            this.updateCartCount();
+            this.navigate('gallery');
+        },
+
+        updateCartCount() {
+            const countEl = document.getElementById('cart-count');
+            countEl.innerText = this.state.cart.length;
+            countEl.style.opacity = this.state.cart.length > 0 ? '1' : '0';
+        },
+
+        updateNav() {
+            const authBtns = document.getElementById('auth-buttons');
+            const userProfile = document.getElementById('user-profile');
+            const usernameDisplay = document.getElementById('username-display');
+
+            if (this.state.user) {
+                authBtns.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+                userProfile.classList.add('flex');
+                usernameDisplay.innerText = `Bonjour, ${this.state.user.name}`;
+            } else {
+                authBtns.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+                userProfile.classList.remove('flex');
+            }
+        },
+
+        showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        },
+
+        // --- Render Functions ---
+        render() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
+            container.className = 'flex-grow fade-in';
+
+            switch(this.state.view) {
+                case 'gallery':
+                    this.renderGallery(container);
+                    break;
+                case 'login':
+                    this.renderAuth(container, 'login');
+                    break;
+                case 'register':
+                    this.renderAuth(container, 'register');
+                    break;
+                case 'cart':
+                    this.renderCart(container);
+                    break;
+            }
+        },
+
+        renderGallery(container) {
+            let html = `
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                        <div class="text-center mb-16">
+                            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-art-black">Collection Actuelle</h1>
+                            <div class="w-24 h-1 bg-art-gold mx-auto"></div>
+                            <p class="mt-4 text-gray-500 max-w-2xl mx-auto">Découvrez notre sélection exclusive d'œuvres d'art contemporain et classique.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                `;
+
+            artworks.forEach(art => {
+                html += `
+                        <div class="group bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+                            <div class="aspect-w-4 aspect-h-3 overflow-hidden bg-gray-200 relative">
+                                <img src="${art.image}" alt="${art.title}" class="w-full h-80 object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 class="text-xl font-bold serif text-gray-900">${art.title}</h3>
+                                        <p class="text-sm text-gray-500 italic">${art.artist}</p>
+                                    </div>
+                                    <span class="text-lg font-bold text-art-gold">${art.price} €</span>
+                                </div>
+                                <p class="text-gray-600 text-sm mb-6 line-clamp-2">${art.description}</p>
+                                <button onclick="app.addToCart(${art.id})" class="w-full bg-art-black text-white py-3 px-4 uppercase text-xs tracking-widest hover:bg-art-gold transition-colors duration-300">
+                                    Ajouter au Panier
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        },
+
+        renderAuth(container, type) {
+            const isLogin = type === 'login';
+            const title = isLogin ? "Connexion" : "Créer un compte";
+            const submitText = isLogin ? "Se connecter" : "S'inscrire";
+            const toggleText = isLogin ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter";
+            const toggleAction = isLogin ? "app.navigate('register')" : "app.navigate('login')";
+
+            const html = `
+                    <div class="min-h-[80vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+                        <div class="max-w-md w-full space-y-8 bg-white p-10 shadow-lg rounded-sm border-t-4 border-art-gold">
+                            <div class="text-center">
+                                <h2 class="mt-2 text-3xl font-bold serif text-gray-900">${title}</h2>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    ${isLogin ? 'Accédez à votre espace collectionneur' : 'Rejoignez notre cercle privé'}
+                                </p>
+                            </div>
+                            <form class="mt-8 space-y-6" onsubmit="event.preventDefault(); ${isLogin ? `app.login(this.email.value, this.password.value)` : `app.register(this.name.value, this.email.value, this.password.value)`}">
+                                <div class="rounded-md shadow-sm -space-y-px">
+                                    ${!isLogin ? `
+                                    <div class="mb-4">
+                                        <label for="name" class="sr-only">Nom complet</label>
+                                        <input id="name" name="name" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-art-gold focus:border-art-gold focus:z-10 sm:text-sm" placeholder="Nom complet">
+                                    </div>
+                                    ` : ''}
+                                    <div class="mb-4">
+                                        <label for="email-address" class="sr-only">Adresse email</label>
+                                        <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-art-gold focus:border-art-gold focus:z-10 sm:text-sm" placeholder="Adresse email">
+                                    </div>
+                                    <div>
+                                        <label for="password" class="sr-only">Mot de passe</label>
+                                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-art-gold focus:border-art-gold focus:z-10 sm:text-sm" placeholder="Mot de passe">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium text-white bg-art-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-art-gold transition-colors">
+                                        ${submitText}
+                                    </button>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="button" onclick="${toggleAction}" class="text-sm text-art-gold hover:text-art-black hover:underline">
+                                        ${toggleText}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            container.innerHTML = html;
+        },
+
+        renderCart(container) {
+            const total = this.state.cart.reduce((sum, item) => sum + item.price, 0);
+
+            let html = `
+                    <div class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+                        <h1 class="text-3xl font-bold serif mb-8 text-center">Votre Panier</h1>
+
+                        ${this.state.cart.length === 0 ? `
+                            <div class="text-center py-20 bg-white shadow-sm rounded border border-gray-100">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">Panier vide</h3>
+                                <p class="mt-1 text-sm text-gray-500">Commencez votre collection en parcourant la galerie.</p>
+                                <div class="mt-6">
+                                    <button onclick="app.navigate('gallery')" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-art-black hover:bg-gray-800">
+                                        Retour à la galerie
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
+                                <ul class="divide-y divide-gray-200">
+                                ${this.state.cart.map((item, index) => `
+                                    <li class="px-4 py-4 sm:px-6 flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <img class="h-16 w-16 object-cover rounded border border-gray-200" src="${item.image}" alt="${item.title}">
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-art-black serif">${item.title}</div>
+                                                <div class="text-sm text-gray-500">${item.artist}</div>
+                                                <div class="text-sm font-bold text-art-gold mt-1">${item.price} €</div>
+                                            </div>
+                                        </div>
+                                        <button onclick="app.removeFromCart(${index})" class="text-red-500 hover:text-red-700 text-sm font-medium">Retirer</button>
+                                    </li>
+                                `).join('')}
+                                </ul>
+                                <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-lg font-bold text-gray-900">Total</span>
+                                        <span class="text-2xl font-bold text-art-black serif">${total} €</span>
+                                    </div>
+                                    <button onclick="app.checkout()" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-art-gold hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-art-gold">
+                                        Passer la commande
+                                    </button>
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                `;
+            container.innerHTML = html;
+        }
+    };
+
+    // Initialize App
+    document.addEventListener('DOMContentLoaded', () => {
+        app.init();
+    });
+</script>
 </body>
 </html>
+
