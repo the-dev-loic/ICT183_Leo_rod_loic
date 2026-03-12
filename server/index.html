@@ -49,7 +49,7 @@
             <div class="flex items-center space-x-8">
                 <a href="index.html" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Galerie</a>
                 <div id="auth-buttons" class="flex space-x-4">
-                    <a href="login.html" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Connexion</a>
+                    <a href="content/html/login.html" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Connexion</a>
                 </div>
                 <div id="user-profile" class="hidden flex items-center space-x-2">
                     <span id="username-display" class="text-sm font-semibold"></span>
@@ -108,7 +108,7 @@
 
 
 <script type="module">
-    import { updateNav, updateCartCount, fetch_data } from '../js/index.js';
+    import { updateNav, updateCartCount, fetch_data,addToCart } from './index';
     fetch_data();
     updateNav();
     updateCartCount();

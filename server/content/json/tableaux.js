@@ -1,4 +1,4 @@
-[
+const artworks=[
   {
     "id": 1,
     "title": "Éclats de Couleurs",
