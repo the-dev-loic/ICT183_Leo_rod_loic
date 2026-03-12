@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import artworksData from '../json/tableaux.json'
+import artworksData from 'content/json/tableaux.js'
 
 export default {
   name: 'GalleryPage',

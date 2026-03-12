@@ -1,0 +1,50 @@
+const artworks=[
+  {
+    "id": 1,
+    "title": "Éclats de Couleurs",
+    "artist": "Jean Dupont",
+    "price": 1200,
+    "description": "Une explosion abstraite de bleu et d'orange capturant l'énergie pure.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1402917a1-914a-4454-81db-791684209f4c.png"
+  },
+  {
+    "id": 2,
+    "title": "Sérénité Alpine",
+    "artist": "Marie Claire",
+    "price": 2500,
+    "description": "Paysage majestueux reflétant la tranquillité des montagnes.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/17681f78f-830e-448c-a2ce-23cd2184747a.png"
+  },
+  {
+    "id": 3,
+    "title": "La Dame en Vert",
+    "artist": "Alessandro Rossi",
+    "price": 4500,
+    "description": "Portrait classique inspiré de la Renaissance, riche en détails.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/19832fe1f-eb38-4354-88ae-8c69d100f62f.png"
+  },
+  {
+    "id": 4,
+    "title": "Géométrie Noire",
+    "artist": "Modernist X",
+    "price": 1800,
+    "description": "Minimalisme pur. Une étude de formes et d'ombres.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1b347924a-ac84-4124-bf72-b0b81d30785d.png"
+  },
+  {
+    "id": 5,
+    "title": "Nature Morte Dorée",
+    "artist": "Élodie Blanc",
+    "price": 950,
+    "description": "Impressionnisme vibrant célébrant les fruits de la saison.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/185eb515c-e4f7-440a-8913-61dd35ae3fa4.png"
+  },
+  {
+    "id": 6,
+    "title": "Rêve Suspendu",
+    "artist": "Fantasy Art Co.",
+    "price": 3200,
+    "description": "Un monde onirique où la gravité n'a plus de sens.",
+    "image": "https://image.qwenlm.ai/public_source/ff6d7f4e-ec7a-48bc-a9a0-cac3a470408a/1982b727b-eea0-4abb-9ae1-47cab482e4a4.png"
+  }
+]

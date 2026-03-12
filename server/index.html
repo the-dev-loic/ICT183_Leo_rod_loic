@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Atelier - Galerie d'Art</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fontsource.org/files/playfair-display/latin-400.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/playfair-display/latin-700.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/lato/latin-300.css" />
+    <link rel="stylesheet" href="https://fontsource.org/files/lato/latin-400.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        'art-black': '#1a1a1a',
+                        'art-gray': '#f4f4f4',
+                        'art-gold': '#c5a059',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Lato', sans-serif; background-color: #fafafa; }
+        h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+    </style>
+</head>
+<body class="text-art-black antialiased flex flex-col min-h-screen">
+
+<!-- Navigation -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20">
+            <div class="flex items-center cursor-pointer">
+                <span class="text-2xl font-bold tracking-widest" style="font-family:'Playfair Display',serif">L'ATELIER</span>
+            </div>
+            <div class="flex items-center space-x-8">
+                <a href="index.html" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Galerie</a>
+                <div id="auth-buttons" class="flex space-x-4">
+                    <a href="content/html/login.html" class="text-sm uppercase tracking-widest hover:text-art-gold transition-colors">Connexion</a>
+                </div>
+                <div id="user-profile" class="hidden flex items-center space-x-2">
+                    <span id="username-display" class="text-sm font-semibold"></span>
+                    <button onclick="logout()" class="text-xs text-gray-500 hover:text-red-500">Déconnexion</button>
+                </div>
+                <button onclick="goToCart()" class="relative group">
+                    <svg class="w-6 h-6 text-gray-700 group-hover:text-art-gold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-art-gold text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center opacity-0 transition-opacity">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Gallery -->
+<main class="flex-grow fade-in">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-art-black" style="font-family:'Playfair Display',serif">Collection Actuelle</h1>
+            <div class="w-24 h-1 bg-art-gold mx-auto"></div>
+            <p class="mt-4 text-gray-500 max-w-2xl mx-auto">Découvrez notre sélection exclusive d'œuvres d'art contemporain et classique.</p>
+        </div>
+        <div id="artworks-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-art-black text-white py-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h3 class="text-xl mb-4" style="font-family:'Playfair Display',serif">L'ATELIER</h3>
+        <p class="text-gray-400 text-sm">Art contemporain & Classique</p>
+        <div class="mt-8 text-xs text-gray-600">&copy; 2023 L'Atelier Galerie. Tous droits réservés.</div>
+    </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 right-5 bg-art-black text-white px-6 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50"></div>
+
+<!-- Cart Modal -->
+<div id="cart-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white w-full max-w-2xl mx-4 rounded shadow-xl">
+        <div class="flex justify-between items-center px-6 py-4 border-b">
+            <h2 class="text-xl font-bold" style="font-family:'Playfair Display',serif">Votre Panier</h2>
+            <button onclick="closeCart()" class="text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+        </div>
+        <div id="cart-items" class="divide-y divide-gray-200 max-h-96 overflow-y-auto"></div>
+        <div class="px-6 py-4 border-t bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-bold">Total</span>
+                <span id="cart-total" class="text-2xl font-bold" style="font-family:'Playfair Display',serif">0 €</span>
+            </div>
+            <button onclick="checkout()" class="w-full py-3 bg-art-gold text-white text-sm uppercase tracking-widest hover:bg-yellow-600 transition-colors">Passer la commande</button>
+        </div>
+    </div>
+</div>
+
+
+<script type="module">
+    import { updateNav, updateCartCount, fetch_data,addToCart } from './index';
+    fetch_data();
+    updateNav();
+    updateCartCount();
+</script>
+
+</body>
+</html>
